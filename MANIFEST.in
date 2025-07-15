@@ -1,0 +1,26 @@
+include README.md
+include LICENSE
+include pyproject.toml
+include requirements.txt
+include mcp_server_config.json
+include config.py
+include *.py
+
+recursive-include src *.py
+recursive-include src *.json
+
+# Include documentation and examples
+include mcp_tools_demo.py
+include simple_query_pets.py
+include query_all_pets.py
+include test_queries.py
+
+# Exclude development files
+exclude setup.sh
+exclude run_server.py
+exclude .env*
+exclude *.log
+exclude .DS_Store
+exclude __pycache__
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co] 
