@@ -1,9 +1,27 @@
 """
-Neo4j MCP Server Package
+Neo4j MCP Tools - Connect agents to Neo4j databases with powerful query capabilities.
 
-A modular Model Context Protocol server for interacting with Neo4j databases
-containing pet care information.
+This package provides a Model Context Protocol (MCP) server for Neo4j databases,
+allowing AI agents to interact with graph databases through standardized tools.
 """
 
 __version__ = "1.0.0"
-__author__ = "Neo4j MCP Server" 
+__author__ = "Your Name"
+__email__ = "your.email@example.com"
+
+from .server import Neo4jMCPServer, create_server
+from .database import Neo4jConnection, QueryBuilder
+from .models import Pet, User, Vet, Product, PetHealthSummary, MedicalHistory
+
+__all__ = [
+    "Neo4jMCPServer",
+    "create_server", 
+    "Neo4jConnection",
+    "QueryBuilder",
+    "Pet",
+    "User", 
+    "Vet",
+    "Product",
+    "PetHealthSummary",
+    "MedicalHistory",
+] 

@@ -72,28 +72,81 @@ The Neo4j database contains the following node types and relationships:
 - **Instance ID**: `b2f690c8`
 - **Database**: `neo4j`
 
-## Setup
+## Installation
 
-1. **Install dependencies**:
+### For Users/Agents
+
+Install the package via pip:
+
+```bash
+pip install neo4j-mcp-tools
+```
+
+### For Development
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/nbhuyyar-chwy/Graph_MCP.git
+   cd Graph_MCP
+   ```
+
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Set up environment variables**:
+3. **Install in development mode:**
+   ```bash
+   pip install -e .
+   ```
+
+## Usage
+
+### For AI Agents
+
+Add this to your MCP client configuration to reference `@neo4j-tools`:
+
+```json
+{
+  "mcpServers": {
+    "neo4j-tools": {
+      "command": "neo4j-mcp-server",
+      "args": [],
+      "env": {
+        "NEO4J_URI": "neo4j+s://your-instance.databases.neo4j.io",
+        "NEO4J_USERNAME": "neo4j", 
+        "NEO4J_PASSWORD": "your_password_here",
+        "NEO4J_DATABASE": "neo4j"
+      }
+    }
+  }
+}
+```
+
+The agent can then use any of the 11 available tools through `@neo4j-tools`.
+
+### Command Line Usage
+
+After installation, start the server:
+
+```bash
+neo4j-mcp-server
+# Or with custom settings:
+neo4j-mcp-server --port 8001 --log-level DEBUG
+```
+
+### Manual Setup (Development)
+
+1. **Set up environment variables**:
    Create a `.env` file with your Neo4j credentials:
    ```
    NEO4J_USERNAME=your_username
    NEO4J_PASSWORD=your_password
    ```
 
-3. **Run the server**:
+2. **Run the server**:
    ```bash
    python main.py
-   ```
-   
-   Or use the startup script:
-   ```bash
-   python run_server.py
    ```
 
 ## Usage Examples

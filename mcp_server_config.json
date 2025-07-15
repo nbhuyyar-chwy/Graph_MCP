@@ -1,0 +1,66 @@
+{
+  "mcpServers": {
+    "neo4j-tools": {
+      "command": "neo4j-mcp-server",
+      "args": [],
+      "env": {
+        "NEO4J_URI": "neo4j+s://your-instance.databases.neo4j.io",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "your_password_here",
+        "NEO4J_DATABASE": "neo4j"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "connect_neo4j",
+      "description": "Connect to Neo4j database",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "run_cypher_query", 
+      "description": "Execute any Cypher query",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "get_database_info",
+      "description": "Get database connection info",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "get_schema_info",
+      "description": "Get database schema information",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "search_pets_by_criteria",
+      "description": "Search pets by various criteria",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "get_user_pets",
+      "description": "Get all pets owned by a user",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "get_pet_medical_history",
+      "description": "Get medical history for a specific pet",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "get_pet_health_overview",
+      "description": "Get health overview for a pet",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "get_pets_with_active_medications",
+      "description": "Get pets currently on medication",
+      "server": "neo4j-tools"
+    },
+    {
+      "name": "validate_query",
+      "description": "Validate a Cypher query syntax",
+      "server": "neo4j-tools"
+    }
+  ]
+} 
