@@ -6,7 +6,7 @@ from mcp.types import TextContent, Tool
 
 from .base import ConnectionRequiredTool, create_tool_schema
 from ..database.queries import QueryBuilder
-from ..models import Pet, PetHealthSummary, MedicalHistory
+from ..models import Pet, PetHealthSummary, MedicalHistory, ProductInteraction, VetVisit
 
 
 class GetUserPetsTool(ConnectionRequiredTool):
@@ -255,4 +255,148 @@ class GetPetsWithActiveMedicationsTool(ConnectionRequiredTool):
             return self._format_success_response(result)
             
         except Exception as e:
-            return self._format_error_response(f"Error getting pets with medications: {str(e)}") 
+            return self._format_error_response(f"Error getting pets with medications: {str(e)}")
+
+
+class GetProductInteractionsTool(ConnectionRequiredTool):
+    """Tool for getting product interaction data with optional filters."""
+    
+    def __init__(self, connection):
+        """Initialize product interactions tool."""
+        super().__init__(
+            name="get_product_interactions",
+            description="Get product interaction data with optional filters",
+            connection=connection
+        )
+    
+    def get_schema(self) -> Tool:
+        """Get the tool schema."""
+        return create_tool_schema(
+            name=self.name,
+            description=self.description,
+            properties={
+                "product_name": {
+                    "type": "string",
+                    "description": "Filter by product name (optional)"
+                },
+                "interaction_type": {
+                    "type": "string",
+                    "description": "Filter by interaction type (optional)"
+                },
+                "min_rating": {
+                    "type": "number",
+                    "description": "Minimum rating filter (1-5, optional)"
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 50)"
+                }
+            }
+        )
+    
+    async def _execute_with_connection(self, arguments: Dict[str, Any]) -> List[TextContent]:
+        """Get product interactions with filters."""
+        try:
+            product_name = arguments.get("product_name")
+            interaction_type = arguments.get("interaction_type")
+            min_rating = arguments.get("min_rating")
+            limit = arguments.get("limit", 50)
+            
+            query, params = QueryBuilder.get_product_interactions(
+                product_name=product_name,
+                interaction_type=interaction_type,
+                min_rating=min_rating
+            )
+            
+            # Add limit to query
+            if limit:
+                query += f" LIMIT {limit}"
+            
+            records = await self.connection.execute_read_query(query, params)
+            
+            # Convert to ProductInteraction models
+            interactions = [ProductInteraction.from_neo4j_record(record) for record in records]
+            interactions_data = [interaction.to_dict() for interaction in interactions]
+            
+            result = {
+                "search_filters": {k: v for k, v in arguments.items() if v is not None},
+                "total_found": len(interactions),
+                "product_interactions": interactions_data
+            }
+            
+            return self._format_success_response(result)
+            
+        except Exception as e:
+            return self._format_error_response(f"Error getting product interactions: {str(e)}")
+
+
+class GetVetAppointmentsTool(ConnectionRequiredTool):
+    """Tool for getting vet appointments with optional filters."""
+    
+    def __init__(self, connection):
+        """Initialize vet appointments tool."""
+        super().__init__(
+            name="get_vet_appointments",
+            description="Get vet appointments with optional filters",
+            connection=connection
+        )
+    
+    def get_schema(self) -> Tool:
+        """Get the tool schema."""
+        return create_tool_schema(
+            name=self.name,
+            description=self.description,
+            properties={
+                "vet_name": {
+                    "type": "string",
+                    "description": "Filter by vet name (optional)"
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "Start date filter in YYYY-MM-DD format (optional)"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "End date filter in YYYY-MM-DD format (optional)"
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 50)"
+                }
+            }
+        )
+    
+    async def _execute_with_connection(self, arguments: Dict[str, Any]) -> List[TextContent]:
+        """Get vet appointments with filters."""
+        try:
+            vet_name = arguments.get("vet_name")
+            start_date = arguments.get("start_date")
+            end_date = arguments.get("end_date")
+            limit = arguments.get("limit", 50)
+            
+            query, params = QueryBuilder.get_vet_appointments(
+                vet_name=vet_name,
+                start_date=start_date,
+                end_date=end_date
+            )
+            
+            # Add limit to query
+            if limit:
+                query += f" LIMIT {limit}"
+            
+            records = await self.connection.execute_read_query(query, params)
+            
+            # Convert to VetVisit models
+            appointments = [VetVisit.from_neo4j_record(record) for record in records]
+            appointments_data = [appointment.to_dict() for appointment in appointments]
+            
+            result = {
+                "search_filters": {k: v for k, v in arguments.items() if v is not None},
+                "total_found": len(appointments),
+                "vet_appointments": appointments_data
+            }
+            
+            return self._format_success_response(result)
+            
+        except Exception as e:
+            return self._format_error_response(f"Error getting vet appointments: {str(e)}") 
