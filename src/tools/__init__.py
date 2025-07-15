@@ -5,7 +5,8 @@ from .connection_tools import ConnectNeo4jTool, GetDatabaseInfoTool, DisconnectN
 from .query_tools import RunCypherQueryTool, GetSchemaInfoTool, ValidateQueryTool
 from .pet_tools import (
     GetUserPetsTool, GetPetMedicalHistoryTool, SearchPetsByCriteriaTool,
-    GetPetHealthOverviewTool, GetPetsWithActiveMedicationsTool
+    GetPetHealthOverviewTool, GetPetsWithActiveMedicationsTool,
+    GetProductInteractionsTool, GetVetAppointmentsTool
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     # Pet tools
     "GetUserPetsTool", "GetPetMedicalHistoryTool", "SearchPetsByCriteriaTool",
     "GetPetHealthOverviewTool", "GetPetsWithActiveMedicationsTool",
+    "GetProductInteractionsTool", "GetVetAppointmentsTool",
 ] 

@@ -18,7 +18,8 @@ from .tools.connection_tools import ConnectNeo4jTool, GetDatabaseInfoTool, Disco
 from .tools.query_tools import RunCypherQueryTool, GetSchemaInfoTool, ValidateQueryTool
 from .tools.pet_tools import (
     GetUserPetsTool, GetPetMedicalHistoryTool, SearchPetsByCriteriaTool,
-    GetPetHealthOverviewTool, GetPetsWithActiveMedicationsTool
+    GetPetHealthOverviewTool, GetPetsWithActiveMedicationsTool,
+    GetProductInteractionsTool, GetVetAppointmentsTool
 )
 from config import Neo4jConfig
 
@@ -63,6 +64,10 @@ class Neo4jMCPServer:
             "search_pets_by_criteria": SearchPetsByCriteriaTool(self.connection),
             "get_pet_health_overview": GetPetHealthOverviewTool(self.connection),
             "get_pets_with_active_medications": GetPetsWithActiveMedicationsTool(self.connection),
+            
+            # Additional tools
+            "get_product_interactions": GetProductInteractionsTool(self.connection),
+            "get_vet_appointments": GetVetAppointmentsTool(self.connection),
         }
     
     def _register_handlers(self):
@@ -117,126 +122,9 @@ class Neo4jMCPServer:
             await self.cleanup()
 
 
-# Additional simplified tools for common operations
-class VetAppointmentsTool:
-    """Simplified tool for vet appointments that can be added to the server."""
-    
-    def __init__(self, connection):
-        self.connection = connection
-        self.name = "get_vet_appointments"
-        self.description = "Get vet appointments with optional filters"
-    
-    def get_schema(self) -> Tool:
-        return Tool(
-            name=self.name,
-            description=self.description,
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "vet_name": {
-                        "type": "string",
-                        "description": "Name of the veterinarian (optional)"
-                    },
-                    "start_date": {
-                        "type": "string",
-                        "description": "Start date in YYYY-MM-DD format (optional)"
-                    },
-                    "end_date": {
-                        "type": "string",
-                        "description": "End date in YYYY-MM-DD format (optional)"
-                    }
-                }
-            }
-        )
-    
-    async def execute(self, arguments: Dict[str, Any]) -> List[TextContent]:
-        """Execute vet appointments query."""
-        if not self.connection.is_connected:
-            return [TextContent(type="text", text="Error: Not connected to database")]
-        
-        try:
-            query, params = QueryBuilder.get_vet_appointments(
-                vet_name=arguments.get("vet_name"),
-                start_date=arguments.get("start_date"),
-                end_date=arguments.get("end_date")
-            )
-            
-            records = await self.connection.execute_read_query(query, params)
-            
-            import json
-            return [TextContent(type="text", text=json.dumps({
-                "total_appointments": len(records),
-                "appointments": records
-            }, indent=2, default=str))]
-            
-        except Exception as e:
-            return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
-class ProductInteractionsTool:
-    """Simplified tool for product interactions."""
-    
-    def __init__(self, connection):
-        self.connection = connection
-        self.name = "get_product_interactions"
-        self.description = "Get product interaction data for analysis"
-    
-    def get_schema(self) -> Tool:
-        return Tool(
-            name=self.name,
-            description=self.description,
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "product_name": {
-                        "type": "string",
-                        "description": "Specific product name (optional)"
-                    },
-                    "interaction_type": {
-                        "type": "string",
-                        "description": "Type of interaction (optional)"
-                    },
-                    "min_rating": {
-                        "type": "number",
-                        "description": "Minimum rating filter (optional)"
-                    }
-                }
-            }
-        )
-    
-    async def execute(self, arguments: Dict[str, Any]) -> List[TextContent]:
-        """Execute product interactions query."""
-        if not self.connection.is_connected:
-            return [TextContent(type="text", text="Error: Not connected to database")]
-        
-        try:
-            query, params = QueryBuilder.get_product_interactions(
-                product_name=arguments.get("product_name"),
-                interaction_type=arguments.get("interaction_type"),
-                min_rating=arguments.get("min_rating")
-            )
-            
-            records = await self.connection.execute_read_query(query, params)
-            
-            import json
-            return [TextContent(type="text", text=json.dumps({
-                "total_interactions": len(records),
-                "interactions": records
-            }, indent=2, default=str))]
-            
-        except Exception as e:
-            return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-
 def create_server() -> Neo4jMCPServer:
     """Factory function to create a configured MCP server."""
-    server = Neo4jMCPServer()
-    
-    # Add additional tools
-    server.tools["get_vet_appointments"] = VetAppointmentsTool(server.connection)
-    server.tools["get_product_interactions"] = ProductInteractionsTool(server.connection)
-    
-    return server
+    return Neo4jMCPServer()
 
 
 async def main():
