@@ -293,4 +293,4 @@ local_config.py
 
 # Database dumps
 *.sql
-*.dump 
+*.dump *.log
