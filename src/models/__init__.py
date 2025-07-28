@@ -1,24 +1,81 @@
-"""Data models for the pet care database entities."""
+"""
+Data models for the pet care database.
 
-from .base import BaseModel, Gender, Species, InteractionType, ValidationError
-from .users import User, UserSummary
-from .pets import Pet, PetHealthSummary, PetSearchCriteria
-from .vets import Vet, VetVisit, Medication, VetWorkloadSummary, MedicalHistory
-from .products import Product, ProductInteraction, ProductRating, PopularProduct, ProductSearchCriteria
+This package contains all data models and schemas used throughout
+the application for representing pets, users, vets, products,
+medications, visits, and sessions.
+"""
+
+from .base import (
+    BaseModel,
+    Gender,
+    InteractionType,
+    Species,
+    ValidationError,
+    validate_required_field,
+    validate_positive_number,
+    validate_rating,
+    validate_date,
+    validate_enum_value,
+    parse_date_string,
+    safe_float,
+    safe_int
+)
+
+from .pets import Pet, PetSummary
+from .users import User, UserSummary  
+from .vets import Vet, VetVisit, Medication, VetWorkloadSummary
+from .products import Product, ProductInteraction
+from .sessions import (
+    Session, 
+    SessionEvent, 
+    SessionSummary, 
+    SessionAnalysisResult,
+    SessionImportance,
+    SessionChannel,
+    EventCategory
+)
 
 __all__ = [
     # Base types
-    "BaseModel", "Gender", "Species", "InteractionType", "ValidationError",
-    
-    # User models
-    "User", "UserSummary",
+    "BaseModel",
+    "Gender", 
+    "InteractionType",
+    "Species",
+    "ValidationError",
+    "validate_required_field",
+    "validate_positive_number", 
+    "validate_rating",
+    "validate_date",
+    "validate_enum_value",
+    "parse_date_string",
+    "safe_float",
+    "safe_int",
     
     # Pet models
-    "Pet", "PetHealthSummary", "PetSearchCriteria",
+    "Pet",
+    "PetSummary",
     
-    # Vet/Medical models
-    "Vet", "VetVisit", "Medication", "VetWorkloadSummary", "MedicalHistory",
+    # User models  
+    "User",
+    "UserSummary",
+    
+    # Vet models
+    "Vet",
+    "VetVisit", 
+    "Medication",
+    "VetWorkloadSummary",
     
     # Product models
-    "Product", "ProductInteraction", "ProductRating", "PopularProduct", "ProductSearchCriteria",
+    "Product",
+    "ProductInteraction", 
+    
+    # Session models
+    "Session",
+    "SessionEvent",
+    "SessionSummary", 
+    "SessionAnalysisResult",
+    "SessionImportance",
+    "SessionChannel",
+    "EventCategory"
 ] 

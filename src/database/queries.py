@@ -398,4 +398,279 @@ class QueryBuilder:
                count(DISTINCT m) as total_medications,
                max(v.date) as last_vet_visit
         """
-        return query, {"pet_name": pet_name} 
+        return query, {"pet_name": pet_name}
+    
+    # ========================================
+    # SESSION QUERIES - New Dimension
+    # ========================================
+    
+    @staticmethod
+    def get_user_sessions(
+        customer_id: Optional[int] = None,
+        username: Optional[str] = None,
+        importance_level: Optional[str] = None,
+        limit: int = 50
+    ) -> Tuple[str, Dict[str, Any]]:
+        """
+        Get sessions for a specific user with optional filters.
+        
+        Args:
+            customer_id: Customer ID to filter by
+            username: Username to filter by  
+            importance_level: Session importance level filter
+            limit: Maximum number of sessions to return
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        conditions = []
+        parameters = {"limit": limit}
+        
+        if customer_id:
+            conditions.append("s.customer_id = $customer_id")
+            parameters["customer_id"] = customer_id
+        elif username:
+            conditions.append("u.username = $username")
+            parameters["username"] = username
+            
+        if importance_level:
+            conditions.append("s.importance_level = $importance_level")
+            parameters["importance_level"] = importance_level
+        
+        where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
+        
+        query = f"""
+        MATCH (u:User)-[:HAS_SESSION]->(s:Session)
+        {where_clause}
+        RETURN s.session_id as session_id, s.customer_id as customer_id,
+               s.session_start as session_start, s.session_end as session_end,
+               s.channel_grouping as channel, s.importance_level as importance,
+               s.confidence_score as confidence, s.adventure_chronicle as chronicle,
+               s.departure_mystery as departure_reason,
+               u.username as username
+        ORDER BY s.session_start DESC
+        LIMIT $limit
+        """
+        
+        return query, parameters
+    
+    @staticmethod
+    def get_session_details(session_id: str) -> Tuple[str, Dict[str, Any]]:
+        """
+        Get detailed information for a specific session including events.
+        
+        Args:
+            session_id: Session ID to retrieve
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        query = """
+        MATCH (u:User)-[:HAS_SESSION]->(s:Session {session_id: $session_id})
+        OPTIONAL MATCH (s)-[:HAS_EVENT]->(e:SessionEvent)
+        RETURN s.session_id as session_id, s.customer_id as customer_id,
+               s.session_start as session_start, s.session_end as session_end,
+               s.channel_grouping as channel, s.importance_level as importance,
+               s.confidence_score as confidence, s.adventure_chronicle as chronicle,
+               s.departure_mystery as departure_reason, s.is_bot as is_bot,
+               s.is_authenticated as is_authenticated,
+               u.username as username,
+               collect({
+                   event_id: e.event_id,
+                   event_name: e.event_name,
+                   event_timestamp: e.event_timestamp,
+                   event_category: e.event_category,
+                   page_type: e.page_type,
+                   revenue: e.revenue
+               }) as events
+        """
+        return query, {"session_id": session_id}
+    
+    @staticmethod
+    def get_session_analytics(
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        customer_id: Optional[int] = None
+    ) -> Tuple[str, Dict[str, Any]]:
+        """
+        Get session analytics and behavioral insights.
+        
+        Args:
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            customer_id: Optional customer ID filter
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        conditions = []
+        parameters = {}
+        
+        if start_date:
+            conditions.append("s.session_start >= datetime($start_date)")
+            parameters["start_date"] = start_date
+            
+        if end_date:
+            conditions.append("s.session_start <= datetime($end_date)")
+            parameters["end_date"] = end_date
+            
+        if customer_id:
+            conditions.append("s.customer_id = $customer_id")
+            parameters["customer_id"] = customer_id
+        
+        where_clause = "WHERE " + " AND ".join(conditions) if conditions else ""
+        
+        query = f"""
+        MATCH (u:User)-[:HAS_SESSION]->(s:Session)
+        {where_clause}
+        RETURN 
+            count(s) as total_sessions,
+            count(DISTINCT s.customer_id) as unique_customers,
+            avg(duration.inMinutes(s.session_start, s.session_end)) as avg_duration_minutes,
+            count(CASE WHEN s.importance_level = 'critical' THEN 1 END) as critical_sessions,
+            count(CASE WHEN s.importance_level = 'significant' THEN 1 END) as significant_sessions,
+            count(CASE WHEN s.importance_level = 'moderate' THEN 1 END) as moderate_sessions,
+            count(CASE WHEN s.importance_level = 'low' THEN 1 END) as low_sessions,
+            avg(s.confidence_score) as avg_confidence,
+            collect(DISTINCT s.channel_grouping) as channels_used
+        """
+        
+        return query, parameters
+    
+    @staticmethod
+    def get_session_journey(
+        customer_id: int,
+        limit: int = 20
+    ) -> Tuple[str, Dict[str, Any]]:
+        """
+        Get session journey for a customer showing session sequence.
+        
+        Args:
+            customer_id: Customer ID to analyze
+            limit: Maximum number of sessions in journey
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        query = """
+        MATCH (u:User)-[:HAS_SESSION]->(s:Session {customer_id: $customer_id})
+        OPTIONAL MATCH (s)-[:NEXT_SESSION]->(next_s:Session)
+        OPTIONAL MATCH (prev_s:Session)-[:NEXT_SESSION]->(s)
+        RETURN s.session_id as session_id, s.session_start as session_start,
+               s.importance_level as importance, s.adventure_chronicle as chronicle,
+               s.channel_grouping as channel, s.confidence_score as confidence,
+               next_s.session_id as next_session_id,
+               prev_s.session_id as previous_session_id,
+               duration.inMinutes(s.session_start, s.session_end) as duration_minutes
+        ORDER BY s.session_start ASC
+        LIMIT $limit
+        """
+        return query, {"customer_id": customer_id, "limit": limit}
+    
+    @staticmethod
+    def get_important_sessions(
+        importance_levels: List[str] = None,
+        min_confidence: float = 0.7,
+        limit: int = 100
+    ) -> Tuple[str, Dict[str, Any]]:
+        """
+        Get sessions marked as important with high confidence.
+        
+        Args:
+            importance_levels: List of importance levels to include
+            min_confidence: Minimum confidence score
+            limit: Maximum number of sessions to return
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        parameters = {"min_confidence": min_confidence, "limit": limit}
+        
+        if importance_levels:
+            importance_filter = "s.importance_level IN $importance_levels AND"
+            parameters["importance_levels"] = importance_levels
+        else:
+            importance_filter = "s.importance_level IN ['critical', 'significant'] AND"
+        
+        query = f"""
+        MATCH (u:User)-[:HAS_SESSION]->(s:Session)
+        WHERE {importance_filter} s.confidence_score >= $min_confidence
+        RETURN s.session_id as session_id, s.customer_id as customer_id,
+               s.session_start as session_start, s.importance_level as importance,
+               s.confidence_score as confidence, s.adventure_chronicle as chronicle,
+               s.departure_mystery as departure_reason, s.channel_grouping as channel,
+               u.username as username,
+               duration.inMinutes(s.session_start, s.session_end) as duration_minutes
+        ORDER BY s.confidence_score DESC, s.session_start DESC
+        LIMIT $limit
+        """
+        
+        return query, parameters
+    
+    @staticmethod
+    def find_similar_sessions(
+        session_id: str,
+        similarity_threshold: float = 0.7,
+        limit: int = 10
+    ) -> Tuple[str, Dict[str, Any]]:
+        """
+        Find sessions similar to a given session based on behavior patterns.
+        
+        Args:
+            session_id: Reference session ID
+            similarity_threshold: Minimum similarity score
+            limit: Maximum number of similar sessions
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        query = """
+        MATCH (ref:Session {session_id: $session_id})
+        MATCH (u:User)-[:HAS_SESSION]->(s:Session)
+        WHERE s.session_id <> $session_id
+        AND s.importance_level = ref.importance_level
+        AND s.channel_grouping = ref.channel_grouping
+        AND abs(duration.inMinutes(s.session_start, s.session_end) - 
+                duration.inMinutes(ref.session_start, ref.session_end)) <= 30
+        RETURN s.session_id as session_id, s.customer_id as customer_id,
+               s.session_start as session_start, s.importance_level as importance,
+               s.adventure_chronicle as chronicle, s.confidence_score as confidence,
+               u.username as username,
+               duration.inMinutes(s.session_start, s.session_end) as duration_minutes
+        ORDER BY s.confidence_score DESC, s.session_start DESC
+        LIMIT $limit
+        """
+        return query, {"session_id": session_id, "limit": limit}
+    
+    @staticmethod
+    def create_session_node(session_data: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+        """
+        Create a new session node in the database.
+        
+        Args:
+            session_data: Dictionary containing session information
+            
+        Returns:
+            Tuple of (query, parameters)
+        """
+        query = """
+        MERGE (u:User {customer_id: $customer_id})
+        CREATE (s:Session {
+            session_id: $session_id,
+            customer_id: $customer_id,
+            anonymous_id: $anonymous_id,
+            session_start: datetime($session_start),
+            session_end: datetime($session_end),
+            session_date: date($session_date),
+            channel_grouping: $channel_grouping,
+            is_bot: $is_bot,
+            is_authenticated: $is_authenticated,
+            adventure_chronicle: $adventure_chronicle,
+            departure_mystery: $departure_mystery,
+            importance_level: $importance_level,
+            confidence_score: $confidence_score
+        })
+        CREATE (u)-[:HAS_SESSION]->(s)
+        RETURN s.session_id as created_session_id
+        """
+        return query, session_data 

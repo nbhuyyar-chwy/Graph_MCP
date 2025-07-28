@@ -2,65 +2,83 @@
 
 from dataclasses import dataclass
 from datetime import date
+from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from .base import (
-    BaseModel, Gender, Species, ValidationError,
-    validate_required_field, validate_positive_number, validate_enum_value,
+    BaseModel, Gender, Species, 
+    validate_required_field, validate_positive_number, validate_date, validate_enum_value,
     parse_date_string, safe_float, safe_int
 )
 
 
 @dataclass
 class Pet(BaseModel):
-    """Pet model representing an individual pet."""
+    """Pet model representing a customer's pet."""
     
-    name: str = ""
-    species: Optional[str] = None
+    # Required fields
+    name: str
+    species: Species
+    
+    # Optional identification
+    microchip_id: Optional[str] = None
+    
+    # Physical characteristics
     breed: Optional[str] = None
+    gender: Optional[Gender] = None
     birth_date: Optional[date] = None
     weight_kg: Optional[float] = None
-    gender: Optional[str] = None
     color: Optional[str] = None
-    microchip_id: Optional[str] = None
-    owner_username: Optional[str] = None  # For convenience in queries
     
     def __post_init__(self):
         """Validate pet data after initialization."""
         validate_required_field(self.name, "name")
-        
-        if self.weight_kg is not None:
-            validate_positive_number(self.weight_kg, "weight_kg")
+        validate_enum_value(self.species, Species, "species")
         
         if self.gender is not None:
             validate_enum_value(self.gender, Gender, "gender")
         
-        if self.species is not None:
-            validate_enum_value(self.species, Species, "species")
-    
-    @property
-    def age_years(self) -> Optional[float]:
-        """Calculate pet's age in years."""
-        if not self.birth_date:
-            return None
+        if self.weight_kg is not None:
+            validate_positive_number(self.weight_kg, "weight_kg")
         
-        today = date.today()
-        age_days = (today - self.birth_date).days
-        return round(age_days / 365.25, 1)
+        if self.birth_date is not None:
+            validate_date(self.birth_date, "birth_date")
     
     @classmethod
     def from_neo4j_record(cls, record: Dict[str, Any]) -> 'Pet':
         """Create Pet instance from Neo4j record."""
         return cls(
-            name=record.get("pet_name") or record.get("name", ""),
-            species=record.get("species"),
-            breed=record.get("breed"),
-            birth_date=parse_date_string(record.get("birth_date")),
-            weight_kg=safe_float(record.get("weight") or record.get("weight_kg")),
-            gender=record.get("gender"),
-            color=record.get("color"),
+            name=record.get("name", ""),
+            species=Species(record.get("species", Species.OTHER.value)),
             microchip_id=record.get("microchip_id"),
-            owner_username=record.get("owner")
+            breed=record.get("breed"),
+            gender=Gender(record.get("gender")) if record.get("gender") else None,
+            birth_date=parse_date_string(record.get("birth_date")),
+            weight_kg=safe_float(record.get("weight_kg")),
+            color=record.get("color")
+        )
+
+
+@dataclass
+class PetSummary(BaseModel):
+    """Summary model for pet with basic statistics."""
+    
+    pet: Pet
+    total_vet_visits: int = 0
+    total_medications: int = 0
+    total_product_interactions: int = 0
+    last_vet_visit: Optional[date] = None
+    
+    @classmethod
+    def from_neo4j_record(cls, record: Dict[str, Any]) -> 'PetSummary':
+        """Create PetSummary instance from Neo4j record."""
+        pet = Pet.from_neo4j_record(record)
+        return cls(
+            pet=pet,
+            total_vet_visits=record.get("total_vet_visits", 0),
+            total_medications=record.get("total_medications", 0),
+            total_product_interactions=record.get("total_product_interactions", 0),
+            last_vet_visit=parse_date_string(record.get("last_vet_visit"))
         )
 
 
