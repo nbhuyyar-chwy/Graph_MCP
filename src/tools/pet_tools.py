@@ -6,7 +6,7 @@ from mcp.types import TextContent, Tool
 
 from .base import ConnectionRequiredTool, create_tool_schema
 from ..database.queries import QueryBuilder
-from ..models import Pet, PetHealthSummary, MedicalHistory, ProductInteraction, VetVisit
+from ..models import Pet, PetSummary, ProductInteraction, VetVisit, MedicalHistory, PetHealthSummary
 
 
 class GetUserPetsTool(ConnectionRequiredTool):

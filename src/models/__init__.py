@@ -22,9 +22,9 @@ from .base import (
     safe_int
 )
 
-from .pets import Pet, PetSummary
+from .pets import Pet, PetSummary, PetHealthSummary
 from .users import User, UserSummary  
-from .vets import Vet, VetVisit, Medication, VetWorkloadSummary
+from .vets import Vet, VetVisit, Medication, VetWorkloadSummary, MedicalHistory
 from .products import Product, ProductInteraction
 from .sessions import (
     Session, 
@@ -55,6 +55,7 @@ __all__ = [
     # Pet models
     "Pet",
     "PetSummary",
+    "PetHealthSummary",
     
     # User models  
     "User",
@@ -65,6 +66,7 @@ __all__ = [
     "VetVisit", 
     "Medication",
     "VetWorkloadSummary",
+    "MedicalHistory",
     
     # Product models
     "Product",

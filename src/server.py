@@ -21,6 +21,9 @@ from .tools.pet_tools import (
     GetPetHealthOverviewTool, GetPetsWithActiveMedicationsTool,
     GetProductInteractionsTool, GetVetAppointmentsTool
 )
+from .tools.user_session_tools import (
+    GetUserSummaryTool, GetUserTagsTool, GetSessionSummaryTool
+)
 from config import Neo4jConfig
 
 logger = logging.getLogger(__name__)
@@ -68,6 +71,11 @@ class Neo4jMCPServer:
             # Additional tools
             "get_product_interactions": GetProductInteractionsTool(self.connection),
             "get_vet_appointments": GetVetAppointmentsTool(self.connection),
+            
+            # User session analysis tools
+            "get_user_summary": GetUserSummaryTool(self.connection),
+            "get_user_tags": GetUserTagsTool(self.connection),
+            "get_session_summary": GetSessionSummaryTool(self.connection),
         }
     
     def _register_handlers(self):
