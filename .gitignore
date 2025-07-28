@@ -155,43 +155,21 @@ cython_debug/
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be added to the global gitignore or merged into this project gitignore.  For a PyCharm
-#  project, it is usually recommended to include .idea directories in version control.
+#  project, it is not recommended to check in the entire .idea directory but you may want to add
+#  specific directories or files.
 .idea/
-
-# Visual Studio Code
-.vscode/
-
-# Sublime Text
-*.sublime-project
-*.sublime-workspace
 
 # Vim
 *.swp
 *.swo
 *~
 
-# Emacs
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
-
 # macOS
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
-Icon
-
-# Thumbnails
+Icon?
 ._*
-
-# Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -199,8 +177,6 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
@@ -212,40 +188,26 @@ Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
-
-# Dump file
 *.stackdump
-
-# Folder config file
 [Dd]esktop.ini
-
-# Recycle Bin used on file shares
 $RECYCLE.BIN/
-
-# Windows Installer files
 *.cab
 *.msi
 *.msix
 *.msm
 *.msp
-
-# Windows shortcuts
 *.lnk
 
 # Linux
 *~
-
-# temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
-
-# KDE directory preferences
 .directory
-
-# Linux trash folder which might appear on any partition or disk
 .Trash-*
-
-# .nfs files are created when an open file is removed but is still being accessed
 .nfs*
+
+# VS Code
+.vscode/
+*.code-workspace
 
 # Project specific
 # Neo4j credentials and sensitive files
@@ -294,3 +256,23 @@ local_config.py
 # Database dumps
 *.sql
 *.dump *.log
+
+# Large data files - prevent GitHub upload issues
+# Large CSV files that exceed GitHub's 100MB limit
+data_session/AlexanderSessionsShort.csv
+
+# Other large data files
+*.csv.large
+data_session/*.csv
+data_graph/*.csv
+memory_db/
+chroma_db/
+*.bin
+*.sqlite3
+
+# Session analysis outputs
+merge_operation_logs/
+template_test_logs/
+conversations/
+api/conversations/
+api/memory_db/
