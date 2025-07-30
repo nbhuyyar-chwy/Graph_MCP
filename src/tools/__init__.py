@@ -8,6 +8,11 @@ from .pet_tools import (
     GetPetHealthOverviewTool, GetPetsWithActiveMedicationsTool,
     GetProductInteractionsTool, GetVetAppointmentsTool
 )
+from .customer_management_tools import (
+    GetCustomerTagsTool, GetCustomerLikesTool, GetCustomerDislikesTool,
+    GetCustomerProductsTool, GetCustomerPetsTool, GetCustomerWebDataTool,
+    GetCustomerProfileTool, AddCustomerTool, AddCustomerPetTool
+)
 
 __all__ = [
     # Base classes
@@ -23,4 +28,9 @@ __all__ = [
     "GetUserPetsTool", "GetPetMedicalHistoryTool", "SearchPetsByCriteriaTool",
     "GetPetHealthOverviewTool", "GetPetsWithActiveMedicationsTool",
     "GetProductInteractionsTool", "GetVetAppointmentsTool",
+    
+    # Customer management tools
+    "GetCustomerTagsTool", "GetCustomerLikesTool", "GetCustomerDislikesTool",
+    "GetCustomerProductsTool", "GetCustomerPetsTool", "GetCustomerWebDataTool",
+    "GetCustomerProfileTool", "AddCustomerTool", "AddCustomerPetTool",
 ] 

@@ -24,6 +24,11 @@ from .tools.pet_tools import (
 from .tools.user_session_tools import (
     GetUserSummaryTool, GetUserTagsTool, GetSessionSummaryTool
 )
+from .tools.customer_management_tools import (
+    GetCustomerTagsTool, GetCustomerLikesTool, GetCustomerDislikesTool,
+    GetCustomerProductsTool, GetCustomerPetsTool, GetCustomerWebDataTool,
+    GetCustomerProfileTool, AddCustomerTool, AddCustomerPetTool
+)
 from config import Neo4jConfig
 
 logger = logging.getLogger(__name__)
@@ -76,6 +81,17 @@ class Neo4jMCPServer:
             "get_user_summary": GetUserSummaryTool(self.connection),
             "get_user_tags": GetUserTagsTool(self.connection),
             "get_session_summary": GetSessionSummaryTool(self.connection),
+            
+            # Customer management tools
+            "get_customer_tags": GetCustomerTagsTool(self.connection),
+            "get_customer_likes": GetCustomerLikesTool(self.connection),
+            "get_customer_dislikes": GetCustomerDislikesTool(self.connection),
+            "get_customer_products": GetCustomerProductsTool(self.connection),
+            "get_customer_pets": GetCustomerPetsTool(self.connection),
+            "get_customer_web_data": GetCustomerWebDataTool(self.connection),
+            "get_customer_profile": GetCustomerProfileTool(self.connection),
+            "add_customer": AddCustomerTool(self.connection),
+            "add_customer_pet": AddCustomerPetTool(self.connection),
         }
     
     def _register_handlers(self):
