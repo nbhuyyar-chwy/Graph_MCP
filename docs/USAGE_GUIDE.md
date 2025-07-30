@@ -109,7 +109,7 @@ cp .env.example .env  # Edit with credentials
 **Step 3:** Run tools directly
 ```bash
 python simple_query_pets.py                # Query all pets
-python mcp_tools_demo.py                   # See all tools
+python examples/mcp_tools_demo.py          # See all tools
 python query_all_pets.py                   # Advanced queries
 ```
 
@@ -229,7 +229,7 @@ python simple_query_pets.py
 ### Tools Not Available
 ```bash
 # List all tools
-echo "1" | python mcp_tools_demo.py
+echo "1" | python examples/mcp_tools_demo.py
 
 # Test specific tool
 python -c "
@@ -251,7 +251,7 @@ print(list(server.tools.keys()))
 
 - **Repository**: https://github.com/nbhuyyar-chwy/Graph_MCP
 - **Issues**: https://github.com/nbhuyyar-chwy/Graph_MCP/issues
-- **Examples**: See `mcp_tools_demo.py` and `test_queries.py`
+- **Examples**: See `examples/mcp_tools_demo.py` and `tests/test_queries.py`
 
 ---
 
@@ -259,7 +259,7 @@ print(list(server.tools.keys()))
 
 ```bash
 # List tools
-echo "1" | python mcp_tools_demo.py
+echo "1" | python examples/mcp_tools_demo.py
 
 # Test connection  
 python simple_query_pets.py

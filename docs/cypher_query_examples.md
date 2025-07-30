@@ -4,7 +4,7 @@
 
 ### Method 1: Interactive Query Runner (Recommended)
 ```bash
-NEO4J_PASSWORD=your_password python run_custom_query.py
+NEO4J_PASSWORD=your_password python utilities/run_custom_query.py
 ```
 
 ### Method 2: Direct MCP Tool Call

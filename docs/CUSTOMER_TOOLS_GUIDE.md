@@ -167,7 +167,7 @@ asyncio.run(use_customer_tools())
 ### Method 3: External Client (Recommended)
 
 ```python
-# See external_client_example.py for complete implementation
+# See examples/external_client_example.py for complete implementation
 class CustomerDataClient:
     def __init__(self, mcp_server_connection):
         self.connection = mcp_server_connection
@@ -238,11 +238,11 @@ Customer
 - `src/server.py` - MCP server setup with tool registration
 - `main.py` - Server entry point
 - `test_tools_simple.py` - Testing and demonstration
-- `external_client_example.py` - External integration example
+- `examples/external_client_example.py` - External integration example
 
 **Test & Integration:**
 - Run `python test_tools_simple.py` to test all functionality
-- Run `python external_client_example.py` for integration demo
+- Run `python examples/external_client_example.py` for integration demo
 - Use `test_customer_tools.py` for comprehensive MCP testing
 
 ## ✅ Verification

@@ -20,7 +20,7 @@ def main():
     print("✅ Environment setup complete")
     print("\n🚀 Starting Diego's analysis...")
     print(f"👤 Customer ID: 957440283")
-    print(f"📄 CSV File: data_session/DiegoSessionShort.csv")
+    print(f"📄 CSV File: data/sessions/DiegoSessionShort.csv")
     print("🎯 INCLUDING ALL SESSIONS (importance threshold = 0.0)")
     
     try:
@@ -33,7 +33,7 @@ def main():
         intelligent_session_analyzer.MIN_EVENTS_PER_SESSION = 1  # Include single events
         
         # Run analysis with Diego's CSV file
-        sessions = analyzer.run_analysis(csv_path="data_session/DiegoSessionShort.csv")
+        sessions = analyzer.run_analysis(csv_path="data/sessions/DiegoSessionShort.csv")
         
         print(f"\n🎉 Diego's Analysis Complete!")
         print(f"📊 Created {len(sessions)} intelligent session nodes in Neo4j")

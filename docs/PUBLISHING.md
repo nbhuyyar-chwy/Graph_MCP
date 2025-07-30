@@ -180,4 +180,4 @@ Users can create environment-specific configurations:
 
 - GitHub Issues: https://github.com/nbhuyyar-chwy/Graph_MCP/issues
 - Documentation: README.md
-- Examples: mcp_tools_demo.py 
+- Examples: examples/mcp_tools_demo.py 

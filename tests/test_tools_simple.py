@@ -189,7 +189,7 @@ async def show_mcp_tools_summary():
     print("   python main.py")
     print("   # Then send MCP tool call messages")
     print()
-    print("2. Direct Integration (as shown in external_client_example.py):")
+    print("2. Direct Integration (as shown in examples/external_client_example.py):")
     print("   from src.server import create_server")
     print("   server = create_server()")
     print("   await server.connection.connect(username, password)")

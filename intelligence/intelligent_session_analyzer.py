@@ -663,7 +663,7 @@ class CorrectSessionAnalyzer:
         record = result.single()
         return record['created_session']
     
-    def run_analysis(self, csv_path: str = "data_session/AlexanderSessionsShort.csv") -> List[SessionAnalysis]:
+    def run_analysis(self, csv_path: str = "data/sessions/AlexanderSessionsShort.csv") -> List[SessionAnalysis]:
         """
         Run the complete analysis pipeline with correct graph structure.
         

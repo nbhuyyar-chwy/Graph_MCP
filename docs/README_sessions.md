@@ -44,14 +44,14 @@ python analyze_alexander_sessions.py --output my_analysis.json
 ### 2. Use the Session Analysis Agent
 
 ```python
-from src.agents.session_analysis_agent import SessionAnalysisAgent
+from intelligence.agents.session_analysis_agent import SessionAnalysisAgent
 
 # Initialize for Alexander (customer ID: 289824860)
 agent = SessionAnalysisAgent(customer_id=289824860)
 
 # Process CSV file
 results = agent.process_csv_file(
-    csv_file_path="data_session/AlexanderSessionsShort.csv",
+    csv_file_path="data/sessions/AlexanderSessionsShort.csv",
     max_rows=5000  # Optional limit
 )
 
