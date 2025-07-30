@@ -209,7 +209,10 @@ $RECYCLE.BIN/
 .vscode/
 *.code-workspace
 
-# Project specific
+# ================================
+# PROJECT SPECIFIC CONFIGURATIONS
+# ================================
+
 # Neo4j credentials and sensitive files
 .env
 .env.local
@@ -217,7 +220,7 @@ $RECYCLE.BIN/
 .env.test
 *.env
 
-# Log files
+# Log files (but keep structured logs in data/logs/)
 *.log
 logs/
 log/
@@ -240,14 +243,15 @@ temp/
 # Backup files
 *.bak
 *.backup
-*~
 
 # Test files and outputs
 test_results/
 test_output/
+test_reports/
 
 # Documentation builds
 docs/build/
+docs/_build/
 
 # Local configuration overrides
 config_local.py
@@ -255,25 +259,84 @@ local_config.py
 
 # Database dumps
 *.sql
-*.dump *.log
+*.dump
+
+# ================================
+# DATA DIRECTORY CONFIGURATIONS
+# ================================
 
 # Large data files - prevent GitHub upload issues
-# Large CSV files that exceed GitHub's 100MB limit
-data_session/AlexanderSessionsShort.csv
+# Keep the actual data files but ignore any large processing outputs
+data/sessions/*.large
+data/graph/*.large
+data/orders/*.large
 
-# Other large data files
-*.csv.large
-data_session/*.csv
-data_graph/*.csv
+# Exclude specific large session files that exceed GitHub's 100MB limit
+data/sessions/AlexanderSessionsShort.csv
+data/sessions/DiegoSessionShort.csv
+data/sessions/MattSessionShort.csv
+
+# Ignore generated/processed data files
+data/processed/
+data/temp/
+data/cache/
+data/backup/
+
+# Session analysis outputs and temp files
+data/sessions/processed/
+data/sessions/temp/
+data/sessions/analysis_cache/
+
+# Order processing temp files
+data/orders/processed/
+data/orders/temp/
+
+# Graph processing temp files  
+data/graph/processed/
+data/graph/temp/
+
+# Log rotation and backup files
+data/logs/*.old
+data/logs/*.bak
+data/logs/archive/
+
+# ================================
+# DEVELOPMENT AND BUILD ARTIFACTS
+# ================================
+
+# Memory databases and caches
 memory_db/
 chroma_db/
+vector_db/
 *.bin
 *.sqlite3
 
-# Session analysis outputs
+# Analysis and processing outputs
 merge_operation_logs/
 template_test_logs/
 conversations/
 api/conversations/
 api/memory_db/
-data_orders/
+
+# Intelligence processing temp files
+intelligence/temp/
+intelligence/cache/
+intelligence/outputs/
+
+# Scripts temp files
+scripts/temp/
+scripts/outputs/
+scripts/logs/
+
+# Test artifacts
+tests/temp/
+tests/outputs/
+tests/__pycache__/
+
+# Utilities temp files
+utilities/temp/
+utilities/cache/
+
+# Examples temp files
+examples/temp/
+examples/outputs/

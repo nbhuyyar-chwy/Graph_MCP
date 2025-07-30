@@ -1,26 +1,30 @@
 include README.md
 include LICENSE
-include pyproject.toml
 include requirements.txt
-include mcp_server_config.json
-include config.py
-include *.py
+include data/config/mcp_server_config.json
+include setup.sh
 
+# Include source code
 recursive-include src *.py
-recursive-include src *.json
 
-# Include documentation and examples
-include mcp_tools_demo.py
-include simple_query_pets.py
-include query_all_pets.py
-include test_queries.py
+# Include documentation
+recursive-include docs *.md
+
+# Include examples
+recursive-include examples *.py
+
+# Include data files
+recursive-include data *.csv *.json *.log
+
+# Include tests
+recursive-include tests *.py
+
+# Include configuration
+include config.py
+include pyproject.toml
 
 # Exclude development files
-exclude setup.sh
-exclude run_server.py
-exclude .env*
-exclude *.log
-exclude .DS_Store
-exclude __pycache__
-recursive-exclude * __pycache__
-recursive-exclude * *.py[co] 
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.egg-info 

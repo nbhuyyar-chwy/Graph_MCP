@@ -661,8 +661,8 @@ async def main():
             return 1
         
         # Load CSV data
-        customers_data = populator.load_csv_data("data_graph/customers.csv")
-        pets_data = populator.load_csv_data("data_graph/pet_profile.csv")
+        customers_data = populator.load_csv_data("data/graph/customers.csv")
+        pets_data = populator.load_csv_data("data/graph/pet_profile.csv")
         
         # Clear existing data
         await populator.clear_database()

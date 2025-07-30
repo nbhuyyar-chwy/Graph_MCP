@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 # Constants
 CUSTOMER_ID = "6180005"  # Matt's customer ID
-CSV_FILE = "data_orders/order_cust_id_ 6180005.csv"
+CSV_FILE = "data/orders/order_cust_id_ 6180005.csv"
 
 class ImprovedMattOrderProcessor:
     """Processes Matt's orders and creates the improved Neo4j graph structure"""
